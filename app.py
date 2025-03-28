@@ -2,21 +2,13 @@ import streamlit as st
 import google.generativeai as genai
 import os
 from typing import List, Dict
+from dotenv import load_dotenv
 
-# Configure Google Gemini API using Streamlit Secrets
-def configure_gemini_api():
-    """Configure the Google Gemini API with the API key from Streamlit secrets."""
-    try:
-        # Get API key from Streamlit secrets
-        api_key = st.secrets["GOOGLE_API_KEY"]
-        if not api_key:
-            st.error("Google API key not found in Streamlit secrets.")
-            return None
-        
-        genai.configure(api_key=api_key)
-    except Exception as e:
-        st.error(f"Error configuring API: {str(e)}")
-        return None
+# Load environment variables from .env
+load_dotenv()
+
+# Configure Gemini API
+genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
 
 # Function to generate interview summary using Gemini
 def generate_interview_summary(transcript_text: str) -> Dict[str, str]:
