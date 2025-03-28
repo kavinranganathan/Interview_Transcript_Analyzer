@@ -125,5 +125,4 @@ def main():
 
 # Run the app
 if __name__ == "__main__":
-    configure_gemini_api()
     main()
