@@ -1,20 +1,16 @@
 import streamlit as st
 import google.generativeai as genai
 import os
-from dotenv import load_dotenv
 from typing import List, Dict
 
-# Load environment variables from .env file
-load_dotenv()
-
-# Configure Google Gemini API
+# Configure Google Gemini API using Streamlit Secrets
 def configure_gemini_api():
-    """Configure the Google Gemini API with the API key from .env."""
+    """Configure the Google Gemini API with the API key from Streamlit secrets."""
     try:
-        # Get API key from environment variable
-        api_key = os.getenv("GOOGLE_API_KEY")
+        # Get API key from Streamlit secrets
+        api_key = st.secrets["GOOGLE_API_KEY"]
         if not api_key:
-            st.error("Google API key not found in .env file.")
+            st.error("Google API key not found in Streamlit secrets.")
             return None
         
         genai.configure(api_key=api_key)
@@ -109,7 +105,7 @@ def main():
             if uploaded_file.type == 'application/pdf':
                 import PyPDF2
                 pdf_reader = PyPDF2.PdfReader(uploaded_file)
-                transcript_text = ' '.join([page.extract_text() for page in pdf_reader.pages])
+                transcript_text = ' '.join([page.extract_text() for page in pdf_reader.pages if page.extract_text()])
             elif uploaded_file.type == 'application/vnd.openxmlformats-officedocument.wordprocessingml.document':
                 import docx
                 doc = docx.Document(uploaded_file)
@@ -134,19 +130,6 @@ def main():
             
         except Exception as e:
             st.error(f"Error processing file: {str(e)}")
-
-# Requirements for the app
-def get_requirements():
-    """
-    Returns a requirements.txt content for the project
-    """
-    return """
-streamlit
-google-generativeai
-pypdf2
-python-docx
-python-dotenv
-"""
 
 # Run the app
 if __name__ == "__main__":
